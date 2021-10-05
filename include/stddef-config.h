@@ -16,14 +16,7 @@ typedef unsigned long long uint64_t;
 
 #endif
 
-#ifdef HAVE_CSTDBOOL
-#include <cstdbool>
-#else
-
-typedef uint32_t BOOL;
-
-#endif
-
+typedef uint32_t apuex_bool;
 
 #endif /* __APUEX_STD_DEF_CONFIG_INCLUDED_ */
 
