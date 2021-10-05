@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+# intemediate file directories
+dist
+.vs
+vs
+Debug
+Release
+
