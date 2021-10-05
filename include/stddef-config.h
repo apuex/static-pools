@@ -1,6 +1,7 @@
 #ifndef __APUEX_STD_DEF_CONFIG_INCLUDED_
 #define __APUEX_STD_DEF_CONFIG_INCLUDED_
 
+#include <cstddef>
 #ifdef HAVE_CSTDINT
 #include <cstdint>
 #else
