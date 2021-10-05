@@ -35,6 +35,12 @@ foreach(CXX_COMPILER_FLAG ${CUSTOM_CXX_COMPILER_FLAGS})
   endif()
 endforeach()
 
+include(CheckIncludeFileCXX)
+CHECK_INCLUDE_FILE_CXX(cstdint  HAVE_CSTDINT)
+if(HAVE_CSTDINT)
+  ADD_DEFINITIONS(-DHAVE_CSTDINT=1)
+endif()
+
 include_directories(
   include
   src 
@@ -48,6 +54,7 @@ link_directories(
 )
 
 set(unit_tests
+  allocator-binary-tree-test
   ring-buffer-test
 )
 
