@@ -36,17 +36,9 @@ namespace apuex {
     virtual ~allocator() throw();
 
 
-    size_type max_size() const throw() {
-      return _capacity;
-    }
-    
-    pointer address(reference value) const {
-      return &value;
-    };
-
-    const_pointer address(const_reference value) const {
-      return &value;
-    }
+    size_type max_size() const throw();
+    pointer address(reference value) const throw();
+    const_pointer address(const_reference value) const throw(); 
 
     pointer allocate(size_type size, void* hint = 0);
     void deallocate(pointer location, size_type size);
@@ -55,31 +47,44 @@ namespace apuex {
 
   private:
     allocator() throw();
-    template<typename U> bool operator==(const allocator<U>&) const throw() { return false; };
+    template<typename U> bool operator==(const allocator<U>&) const throw() { return false; }
     const size_t _capacity;
 
   };
 
-  template<typename T> allocator<T>::allocator(const allocator& rv) : _capacity(rv._capacity) {
+  template<typename T> allocator<T>::allocator(const allocator& rv) throw() : _capacity(rv._capacity) {
     std::cout << "copy construct allocate<" << typeid(value_type).name() << "> with capacity " << rv._capacity << std::endl;
   }
 
   template<typename T> 
   template<typename U> 
-  allocator<T>::allocator(const allocator<U>& rv) : _capacity(0) {
+  allocator<T>::allocator(const allocator<U>& rv) throw() : _capacity(0) {
     std::cout << "convert allocate from <" << typeid(U).name() << "> to <" << typeid(T).name() << ">" << std::endl;
   }
 
-  template<typename T> allocator<T>::allocator(size_t capacity) : _capacity(capacity) {
+  template<typename T> allocator<T>::allocator(size_t capacity) throw() : _capacity(capacity) {
     std::cout << "construct allocate<" << typeid(value_type).name() << "> with capacity " << capacity << std::endl;
   }
-  template<typename T> allocator<T>::~allocator() {
+
+  template<typename T> allocator<T>::~allocator() throw() {
     // TODO: free ALL memory allocated.
     std::cout << "destruct allocate<" << typeid(value_type).name() << ">with capacity " << _capacity << std::endl;
   }
   
+  template<typename T> typename allocator<T>::size_type allocator<T>::max_size() const throw() {
+    return _capacity;
+  }
+    
+  template<typename T> typename allocator<T>::pointer allocator<T>::address(reference value) const throw() {
+    return &value;
+  }
+
+  template<typename T> typename allocator<T>::const_pointer allocator<T>::address(const_reference value) const throw() {
+    return &value;
+  }
+
   /* NOT USED private constructor*/
-  template<typename T> allocator<T>::allocator() : _capacity(0) {}
+  template<typename T> allocator<T>::allocator() throw() : _capacity(0) {}
 
   template <typename T>  typename allocator<T>::pointer allocator<T>::allocate(typename allocator<T>::size_type size, void* hint) {
     std::cout << "allocate <" << typeid(value_type).name() << ">: " << size << " elements" << std::endl;
