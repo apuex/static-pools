@@ -54,21 +54,25 @@ namespace apuex {
 
   template<typename T> allocator<T>::allocator(const allocator& rv) throw() : _capacity(rv._capacity) {
     std::cout << "copy construct allocate<" << typeid(value_type).name() << "> with capacity " << rv._capacity << std::endl;
+    std::cout << "=> this = " << this << ", &rv = " << &rv << std::endl;
   }
 
   template<typename T> 
   template<typename U> 
   allocator<T>::allocator(const allocator<U>& rv) throw() : _capacity(0) {
     std::cout << "convert allocate from <" << typeid(U).name() << "> to <" << typeid(T).name() << ">" << std::endl;
+    std::cout << "=> this = " << this << ", &rv = " << &rv << std::endl;
   }
 
   template<typename T> allocator<T>::allocator(size_t capacity) throw() : _capacity(capacity) {
     std::cout << "construct allocate<" << typeid(value_type).name() << "> with capacity " << capacity << std::endl;
+    std::cout << "=> this = " << this << std::endl;
   }
 
   template<typename T> allocator<T>::~allocator() throw() {
     // TODO: free ALL memory allocated.
     std::cout << "destruct allocate<" << typeid(value_type).name() << ">with capacity " << _capacity << std::endl;
+    std::cout << "=> this = " << this << std::endl;
   }
   
   template<typename T> typename allocator<T>::size_type allocator<T>::max_size() const throw() {
