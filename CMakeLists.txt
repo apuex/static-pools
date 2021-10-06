@@ -54,6 +54,7 @@ link_directories(
 )
 
 set(unit_tests
+  allocator-allocate-test
   allocator-binary-tree-test
   ring-buffer-test
 )
