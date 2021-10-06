@@ -19,52 +19,87 @@ namespace apuex {
     typedef value_type* pointer;
     typedef const value_type* const_pointer;
 
-    typedef value_type reference;
-    typedef const value_type const_reference;
+    typedef value_type& reference;
+    typedef const value_type& const_reference;
 
     typedef size_t size_type;
-    typedef size_t difference_type;
+    typedef ptrdiff_t difference_type;
 
-    explicit allocator(size_t size): _capacity(size) {}
-    allocator(const allocator& rv): _capacity(rv._capacity) {}
+    template <typename U>
+    struct rebind {
+      typedef allocator<U> other;
+    };
+    
+    allocator(const allocator& rv) throw();
+    template<typename U> allocator(const allocator<U>& rv) throw();
+    explicit allocator(size_t capacity) throw();
+    virtual ~allocator() throw();
 
-    template<typename U> 
-    allocator(const allocator<U>&): _capacity(100) { }
-    template<typename U> 
-    bool operator==(const allocator<U>&) const { return true; }
 
-    /*
-    template< class T, class... Args >
-    static void construct(Alloc& a, T* p, Args&&... args) {
+    size_type max_size() const throw() {
+      return _capacity;
+    }
+    
+    pointer address(reference value) const {
+      return &value;
+    };
 
+    const_pointer address(const_reference value) const {
+      return &value;
     }
 
-    template <class _Uty>
-    void destroy(_Uty* const _Ptr) {
-        _Ptr->~_Uty();
-    }
-
-    value_type* allocate(size_t size, void* location) {
-      std::cout << "allocate " << typeid(value_type).name() << ": " << size << std::endl;
-      return static_cast<value_type*>(malloc(size * sizeof(value_type)));
-    }
-    */
-
-    value_type* allocate(size_t size) {
-      std::cout << "allocate " << typeid(value_type).name() << ": " << size << std::endl;
-      return static_cast<value_type*>(malloc(size * sizeof(value_type)));
-    }
-
-    void deallocate(value_type* const location, size_t size) {
-      std::cout << "deallocate " << typeid(value_type).name() << ": " << size << std::endl;
-      free(location);
-    }
+    pointer allocate(size_type size, void* hint = 0);
+    void deallocate(pointer location, size_type size);
+    void construct(pointer location, const T& value);
+    void destroy(pointer p);
 
   private:
+    allocator() throw();
+    template<typename U> bool operator==(const allocator<U>&) const throw() { return false; };
     const size_t _capacity;
 
   };
 
+  template<typename T> allocator<T>::allocator(const allocator& rv) : _capacity(rv._capacity) {
+    std::cout << "copy construct allocate<" << typeid(value_type).name() << "> with capacity " << rv._capacity << std::endl;
+  }
+
+  template<typename T> 
+  template<typename U> 
+  allocator<T>::allocator(const allocator<U>& rv) : _capacity(0) {
+    std::cout << "convert allocate from <" << typeid(U).name() << "> to <" << typeid(T).name() << ">" << std::endl;
+  }
+
+  template<typename T> allocator<T>::allocator(size_t capacity) : _capacity(capacity) {
+    std::cout << "construct allocate<" << typeid(value_type).name() << "> with capacity " << capacity << std::endl;
+  }
+  template<typename T> allocator<T>::~allocator() {
+    // TODO: free ALL memory allocated.
+    std::cout << "destruct allocate<" << typeid(value_type).name() << ">with capacity " << _capacity << std::endl;
+  }
+  
+  /* NOT USED private constructor*/
+  template<typename T> allocator<T>::allocator() : _capacity(0) {}
+
+  template <typename T>  typename allocator<T>::pointer allocator<T>::allocate(typename allocator<T>::size_type size, void* hint) {
+    std::cout << "allocate <" << typeid(value_type).name() << ">: " << size << " elements" << std::endl;
+    return static_cast<value_type*>(malloc(size * sizeof(value_type)));
+  }
+  
+  template <typename T> void allocator<T>::deallocate(typename allocator<T>::pointer location, typename allocator<T>::size_type size) {
+    std::cout << "deallocate <" << typeid(value_type).name() << ">: " << size << " elements" << std::endl;
+    free(location);
+  }
+
+  template <typename T> void allocator<T>::construct(typename allocator<T>::pointer location, const T& value) {
+    std::cout << "construct <" << typeid(value_type).name() << ">: initial value is " << value << std::endl;
+    new ((void*)location) T(value);
+  }
+
+  template <typename T> void allocator<T>::destroy(typename allocator<T>::pointer p) {
+    std::cout << "destroy <" << typeid(value_type).name() << ">" << std::endl;
+    p->~T();
+  }
 }
 
 #endif /* __APUEX_ALLOCATOR_CXX_INCLUDED_ */
