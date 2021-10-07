@@ -1,4 +1,4 @@
-#include "ring-buffer.hpp"
+#include "apuex/ring-buffer.hpp"
 #include <iostream>
 
 using namespace std;
@@ -13,6 +13,8 @@ int main(int argc, char* argv[]) {
   char output[32] = {0};
 
   cout << "[BEFORE]"
+     << ": empty=" << buffer.empty()
+     << ": full=" << buffer.full()
      << ": buffer_size=" << buffer.buffer_size()
      << ", element_count=" << buffer.element_count()
      << ", read_pos=" << buffer.read_pos()
@@ -22,6 +24,8 @@ int main(int argc, char* argv[]) {
   len = buffer.write(input, sizeof(input));
   cout << len << " bytes written." << endl;
   cout << "[AFTER]"
+     << ": empty=" << buffer.empty()
+     << ": full=" << buffer.full()
      << ": buffer_size=" << buffer.buffer_size()
      << ", element_count=" << buffer.element_count()
      << ", read_pos=" << buffer.read_pos()
@@ -30,6 +34,8 @@ int main(int argc, char* argv[]) {
      << endl;
 
   cout << "[BEFORE]"
+     << ": empty=" << buffer.empty()
+     << ": full=" << buffer.full()
      << ": buffer_size=" << buffer.buffer_size()
      << ", element_count=" << buffer.element_count()
      << ", read_pos=" << buffer.read_pos()
@@ -39,6 +45,8 @@ int main(int argc, char* argv[]) {
   len = buffer.read(output, sizeof(output));
   cout << len << " bytes read: [" << output << "]" << endl;
   cout << "[AFTER]"
+     << ": empty=" << buffer.empty()
+     << ": full=" << buffer.full()
      << ": buffer_size=" << buffer.buffer_size()
      << ", element_count=" << buffer.element_count()
      << ", read_pos=" << buffer.read_pos()
@@ -47,6 +55,8 @@ int main(int argc, char* argv[]) {
      << endl;
 
   cout << "[BEFORE]"
+     << ": empty=" << buffer.empty()
+     << ": full=" << buffer.full()
      << ": buffer_size=" << buffer.buffer_size()
      << ", element_count=" << buffer.element_count()
      << ", read_pos=" << buffer.read_pos()
@@ -56,6 +66,8 @@ int main(int argc, char* argv[]) {
   len = buffer.write(input, sizeof(input));
   cout << len << " bytes written." << endl;
   cout << "[AFTER]"
+     << ": empty=" << buffer.empty()
+     << ": full=" << buffer.full()
      << ": buffer_size=" << buffer.buffer_size()
      << ", element_count=" << buffer.element_count()
      << ", read_pos=" << buffer.read_pos()
@@ -64,6 +76,8 @@ int main(int argc, char* argv[]) {
      << endl;
 
   cout << "[BEFORE]"
+     << ": empty=" << buffer.empty()
+     << ": full=" << buffer.full()
      << ": buffer_size=" << buffer.buffer_size()
      << ", element_count=" << buffer.element_count()
      << ", read_pos=" << buffer.read_pos()
@@ -73,6 +87,8 @@ int main(int argc, char* argv[]) {
   len = buffer.read(output, sizeof(output));
   cout << len << " bytes read: [" << output << "]" << endl;
   cout << "[AFTER]"
+     << ": empty=" << buffer.empty()
+     << ": full=" << buffer.full()
      << ": buffer_size=" << buffer.buffer_size()
      << ", element_count=" << buffer.element_count()
      << ", read_pos=" << buffer.read_pos()
@@ -81,6 +97,8 @@ int main(int argc, char* argv[]) {
      << endl;
 
   cout << "[BEFORE]"
+     << ": empty=" << buffer.empty()
+     << ": full=" << buffer.full()
      << ": buffer_size=" << buffer.buffer_size()
      << ", element_count=" << buffer.element_count()
      << ", read_pos=" << buffer.read_pos()
@@ -90,6 +108,8 @@ int main(int argc, char* argv[]) {
   len = buffer.write(input, sizeof(input));
   cout << len << " bytes written." << endl;
   cout << "[AFTER]"
+     << ": empty=" << buffer.empty()
+     << ": full=" << buffer.full()
      << ": buffer_size=" << buffer.buffer_size()
      << ", element_count=" << buffer.element_count()
      << ", read_pos=" << buffer.read_pos()
@@ -98,6 +118,8 @@ int main(int argc, char* argv[]) {
      << endl;
 
   cout << "[BEFORE]"
+     << ": empty=" << buffer.empty()
+     << ": full=" << buffer.full()
      << ": buffer_size=" << buffer.buffer_size()
      << ", element_count=" << buffer.element_count()
      << ", read_pos=" << buffer.read_pos()
@@ -107,6 +129,8 @@ int main(int argc, char* argv[]) {
   len = buffer.read(output, sizeof(output));
   cout << len << " bytes read: [" << output << "]" << endl;
   cout << "[AFTER]"
+     << ": empty=" << buffer.empty()
+     << ": full=" << buffer.full()
      << ": buffer_size=" << buffer.buffer_size()
      << ", element_count=" << buffer.element_count()
      << ", read_pos=" << buffer.read_pos()

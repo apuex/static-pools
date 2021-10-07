@@ -94,3 +94,10 @@ endforeach()
 
 add_dependencies(check ${unit_tests})
 
+install(FILES
+  include/apuex/allocator.hpp
+  include/apuex/ring-buffer.hpp
+  include/apuex/stddef-config.h
+  DESTINATION include/apuex/
+  CONFIGURATIONS Release)
+

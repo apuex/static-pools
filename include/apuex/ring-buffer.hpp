@@ -44,6 +44,8 @@ class ring_buffer {
     }
   }
 
+  bool empty() const { return (0 == _element_count); }
+  bool full() const { return (_buffer_size == _element_count); }
   size_t buffer_size() const { return _buffer_size; }
   size_t element_count() const { return _element_count; }
   size_t read_pos() const { return _rd_pos; }
