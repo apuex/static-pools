@@ -33,6 +33,7 @@
 
 # intemediate file directories
 dist
+dist-*
 .vs
 vs
 Debug

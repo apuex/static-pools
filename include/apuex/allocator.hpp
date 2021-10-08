@@ -31,7 +31,9 @@ namespace apuex {
     };
     
     allocator(const allocator& rv) throw();
+#if !defined(_MSC_VER) || (_MSC_VER >= 1400)
     template<typename U> allocator(const allocator<U>& rv) throw();
+#endif
     explicit allocator(size_t capacity) throw();
     virtual ~allocator() throw();
 
@@ -57,12 +59,14 @@ namespace apuex {
     std::cout << "=> this = " << this << ", &rv = " << &rv << std::endl;
   }
 
+#if !defined(_MSC_VER) || (_MSC_VER >= 1400)
   template<typename T> 
   template<typename U> 
   allocator<T>::allocator(const allocator<U>& rv) throw() : _capacity(0) {
     std::cout << "convert allocate from <" << typeid(U).name() << "> to <" << typeid(T).name() << ">" << std::endl;
     std::cout << "=> this = " << this << ", &rv = " << &rv << std::endl;
   }
+#endif
 
   template<typename T> allocator<T>::allocator(size_t capacity) throw() : _capacity(capacity) {
     std::cout << "construct allocate<" << typeid(value_type).name() << "> with capacity " << capacity << std::endl;

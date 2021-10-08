@@ -8,7 +8,7 @@ using namespace apuex;
 typedef apuex::allocator<uint32_t> myallocator;
 
 int main(int argc, char* argv[]) {
-  uint32_t d = 0;
+  uint32_t d = 1234;
   myallocator myalloc(32);
   vector<uint32_t, myallocator> v(32, d, myalloc);
 
