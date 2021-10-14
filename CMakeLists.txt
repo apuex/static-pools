@@ -56,6 +56,10 @@ link_directories(
 set(unit_tests
   allocator-allocate-test
   allocator-binary-tree-test
+  basic-parser-test
+  modbus-bytes-test
+  modbus-request-test
+  modbus-response-test
   ring-buffer-test
 )
 
