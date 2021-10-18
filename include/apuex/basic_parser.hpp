@@ -1,7 +1,7 @@
 #ifndef __APUEX_BASIC_PARSER_CXX_INCLUDED_
 #define __APUEX_BASIC_PARSER_CXX_INCLUDED_
 
-#include <apuex/stddef-config.h>
+#include <apuex/stddef_config.h>
 
 
 namespace apuex {

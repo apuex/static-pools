@@ -1,4 +1,4 @@
-#include "apuex/ring-buffer.hpp"
+#include <apuex/ring_buffer.hpp>
 #include <iostream>
 
 using namespace std;

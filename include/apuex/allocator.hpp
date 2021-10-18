@@ -1,7 +1,7 @@
 #ifndef __APUEX_ALLOCATOR_CXX_INCLUDED_
 #define __APUEX_ALLOCATOR_CXX_INCLUDED_
 
-#include "stddef-config.h"
+#include <apuex/stddef_config.h>
 #include <memory>
 #include <iostream>
 

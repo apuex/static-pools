@@ -1,6 +1,6 @@
 #ifndef __APUEX_MODBUS_CXX_INCLUDED_
 #define __APUEX_MODBUS_CXX_INCLUDED_
-#include <apuex/basic-parser.hpp>
+#include <apuex/basic_parser.hpp>
 
 namespace apuex {
 
