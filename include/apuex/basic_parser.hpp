@@ -45,17 +45,17 @@ namespace apuex {
       return *this;
     }
 
-    void assign(pointer p) {
+    inline void assign(pointer p) {
       _pointer = reinterpret_cast<uint8_t*>(p);
       _pos = BigEndian ? _size : 0;
     }
 
-    void assign(pointer p, const Predicate pred) {
+    inline void assign(pointer p, const Predicate pred) {
       assign(p);
       _predicate = pred;
     }
 
-    CodecState decode(const uint8_t& b) {
+    inline CodecState decode(const uint8_t& b) {
       if (BigEndian) {
         if (0 == _pos) return NoContent;
         *(_pointer + _pos - 1) = b;
@@ -78,7 +78,7 @@ namespace apuex {
       }
     }
 
-    CodecState encode(uint8_t& b) {
+    inline CodecState encode(uint8_t& b) {
       if (BigEndian) {
         if (0 == _pos) return NoContent;
         b = *(_pointer + _pos - 1);
@@ -95,8 +95,8 @@ namespace apuex {
       }
     }
 
-    const_reference value() { return reinterpret_cast<const_reference>(*_pointer); }
-    void value(const_reference v) { reinterpret_cast<reference>(*_pointer) = v; }
+    inline const_reference value() { return reinterpret_cast<const_reference>(*_pointer); }
+    inline void value(const_reference v) { reinterpret_cast<reference>(*_pointer) = v; }
 
   private:
     const size_t _size;
