@@ -100,6 +100,7 @@ add_dependencies(check ${unit_tests})
 
 install(FILES
   include/apuex/allocator.hpp
+  include/apuex/basic_parser.hpp
   include/apuex/ring_buffer.hpp
   include/apuex/stddef_config.h
   DESTINATION include/apuex/

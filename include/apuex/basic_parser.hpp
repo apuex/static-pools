@@ -61,6 +61,7 @@ namespace apuex {
         *(_pointer + _pos - 1) = b;
         _pos--;
         if (0 == _pos) {
+          _pos = _size;
           if (_predicate(*_pointer)) return Completed;
           else return Rejected;
         }
@@ -71,6 +72,7 @@ namespace apuex {
         *(_pointer + _pos) = b;
         _pos++;
         if (_size == _pos) {
+          _pos = 0;
           if (_predicate(*_pointer)) return Completed;
           else return Rejected;
         }
@@ -83,14 +85,20 @@ namespace apuex {
         if (0 == _pos) return NoContent;
         b = *(_pointer + _pos - 1);
         _pos--;
-        if (0 == _pos) return Completed;
+        if (0 == _pos) {
+          _pos = _size;
+          return Completed;
+        }
         else return Consumed;
       }
       else {
         if (_size == _pos) return NoContent;
         b = *(_pointer + _pos);
         _pos++;
-        if (_size == _pos) return Completed;
+        if (_size == _pos) {
+          _pos = 0;
+          return Completed;
+        }
         else return Consumed;
       }
     }
