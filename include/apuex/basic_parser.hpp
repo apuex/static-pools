@@ -7,7 +7,11 @@
 namespace apuex {
   enum CodecState { Consumed, Produced, Completed, NoContent, Rejected };
 
-  template <typename Type, typename Predicate, bool BigEndian = false>
+  template <typename Type>
+  struct NullPredicate {
+    bool operator()(const Type& value) const { return true; }
+  };
+  template <typename Type, typename Predicate=NullPredicate<Type>, bool BigEndian = false>
   class BasicParser {
   public:
     typedef Type value_type;
@@ -15,8 +19,9 @@ namespace apuex {
     typedef const Type* const_pointer;
     typedef Type& reference;
     typedef const Type& const_reference;
+    typedef NullPredicate<value_type> AllSuffice;
 
-    BasicParser(pointer p, const Predicate pred)
+    BasicParser(pointer p, const Predicate pred=AllSuffice())
       : _size(sizeof(value_type))
       , _pointer(reinterpret_cast<uint8_t*>(p))
       , _predicate(pred)
