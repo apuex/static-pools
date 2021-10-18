@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
   } while (Completed != state && NoContent!= state);
   printf("]\n");
 
-  parser.assign(req1);
+  parser.offer(req1);
   for (i = 0, state = Consumed; i != sizeof(ba) && Completed != state && Rejected != state; ++i ) {
     state = parser.decode(ba[i]);
   } 

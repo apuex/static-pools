@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
   } 
   printf("]\n");
 
-  parser.assign(output);
+  parser.offer(output);
   for (i = 0, state = Consumed; i != sizeof(bytes) && Completed != state && Rejected != state; ++i ) {
     state = parser.decode(bytes[i]);
   } 

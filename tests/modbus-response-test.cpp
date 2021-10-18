@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
   req.crc16 = 0xeeb4;
 
   struct ModbusResponse input(req);
-  input.byteArray.assign(bytes, sizeof(bytes));
+  input.byteArray.offer(bytes, sizeof(bytes));
   input.crc16 = 0x6c9a;
 
   struct ModbusResponse output(req);
@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
   } 
   printf("]\n");
 
-  parser.assign(output);
+  parser.offer(output);
   for (i = 0, state = Consumed; i != sizeof(bytes_in) && Completed != state && Rejected != state; ++i ) {
     state = parser.decode(bytes_in[i]);
   } 

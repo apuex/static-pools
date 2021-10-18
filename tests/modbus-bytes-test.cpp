@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
   struct ModbusByteArray input;
   struct ModbusByteArray output;
  
-  input.assign(bytes, sizeof(bytes));
+  input.offer(bytes, sizeof(bytes));
 
   ModbusByteArrayParser parser(input, byte_equal(0x08));
 
@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
   } 
   printf("]\n");
 
-  parser.assign(output, byte_equal(0x08));
+  parser.offer(output, byte_equal(0x08));
   for (i = 0, state = Consumed; i != sizeof(bytes_in) && Completed != state && Rejected != state; ++i ) {
     state = parser.decode(bytes_in[i]);
   } 

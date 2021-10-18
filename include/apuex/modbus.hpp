@@ -65,7 +65,7 @@ namespace apuex {
       }
     }
 
-    void assign(const uint8_t* ba, size_t len) {
+    void offer(const uint8_t* ba, size_t len) {
       length = len;
       for (size_t i = 0; i != len && i < 255; ++i) { // i must less than 255
         bytes[i] = ba[i];
@@ -213,14 +213,14 @@ namespace apuex {
     }
     virtual ~ModbusResquestParser() { }
 
-    void assign(ModbusRequest& payload) {
+    void offer(ModbusRequest& payload) {
       _payload = &payload;
       _pos = 0;
-      _address.assign(&payload.address);
-      _command.assign(&payload.command);
-      _startOfRegister.assign(&payload.startOfRegister);
-      _length.assign(&payload.length);
-      _crc16.assign(&payload.crc16);
+      _address.offer(&payload.address);
+      _command.offer(&payload.command);
+      _startOfRegister.offer(&payload.startOfRegister);
+      _length.offer(&payload.length);
+      _crc16.offer(&payload.crc16);
       _crc16_flag = 0;
       _crc16_value = 0xFFFF;
     }
@@ -333,15 +333,15 @@ namespace apuex {
       , _pos(0)
       , _index(0) {}
 
-    void assign(ModbusByteArray& payload) {
-      _length.assign(&payload.length);
+    void offer(ModbusByteArray& payload) {
+      _length.offer(&payload.length);
       _payload = payload.bytes;
       _pos = 0;
       _index = 0;
     }
 
-    void assign(ModbusByteArray& payload, const byte_equal& pred) {
-      _length.assign(&payload.length, pred);
+    void offer(ModbusByteArray& payload, const byte_equal& pred) {
+      _length.offer(&payload.length, pred);
       _payload = payload.bytes;
       _pos = 0;
       _index = 0;
@@ -415,13 +415,13 @@ namespace apuex {
       , _crc16_value(0xFFFF)
     {}
 
-    void assign(ModbusResponse& payload) {
+    void offer(ModbusResponse& payload) {
       _payload = &payload;
       _pos = 0;
-      _address.assign(&payload.address, byte_equal(payload.request.address));
-      _command.assign(&payload.command, byte_equal(payload.request.command));
-      _bytes.assign(payload.byteArray, byte_equal(payload.request.length * 2));
-      _crc16.assign(&payload.crc16, DefaultWordPredicate);
+      _address.offer(&payload.address, byte_equal(payload.request.address));
+      _command.offer(&payload.command, byte_equal(payload.request.command));
+      _bytes.offer(payload.byteArray, byte_equal(payload.request.length * 2));
+      _crc16.offer(&payload.crc16, DefaultWordPredicate);
       _crc16_flag = 0;
       _crc16_value = 0xFFFF;
     }

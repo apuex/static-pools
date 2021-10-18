@@ -45,15 +45,17 @@ namespace apuex {
       return *this;
     }
 
-    inline void assign(pointer p) {
+    inline void offer(pointer p) {
       _pointer = reinterpret_cast<uint8_t*>(p);
       _pos = BigEndian ? _size : 0;
     }
 
-    inline void assign(pointer p, const Predicate pred) {
-      assign(p);
+    inline void offer(pointer p, const Predicate pred) {
+      offer(p);
       _predicate = pred;
     }
+
+    inline value_type take() { return value(); }
 
     inline CodecState decode(const uint8_t& b) {
       if (BigEndian) {
