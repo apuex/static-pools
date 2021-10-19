@@ -134,28 +134,6 @@ namespace apuex {
   }
 
   /* VALIDATION predicates */
-  template<typename T>
-  struct equal_predicate {
-    equal_predicate(const T r) : expected(r) { }
-    bool operator()(const T& v) const { return (expected == v); }
-    equal_predicate& operator=(const equal_predicate& r) {
-      expected = r.expected;
-      return *this;
-    }
-    T expected;
-  };
-
-  template<typename T>
-  struct less_predicate {
-    explicit less_predicate(const T r) : expected(r) { }
-    bool operator()(const T& v) const { return (v < expected); }
-    less_predicate& operator=(const less_predicate& r) {
-      expected = r.expected;
-      return *this;
-    }
-    T expected;
-  };
-
   typedef equal_predicate<uint8_t> byte_equal;
   typedef less_predicate<uint8_t>  byte_less;
   typedef bool (*BytePredicate)(const uint8_t&);
