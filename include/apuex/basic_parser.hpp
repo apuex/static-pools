@@ -45,6 +45,14 @@ namespace apuex {
     typedef const Type& const_reference;
     typedef NullPredicate<value_type> AllSuffice;
 
+    BasicParser(reference p, const Predicate pred=AllSuffice())
+      : _size(sizeof(value_type))
+      , _pointer(reinterpret_cast<uint8_t*>(&p))
+      , _predicate(pred)
+      , _pos(BigEndian ? _size : 0)
+    {
+      _pos = BigEndian ? _size : 0;
+    }
     BasicParser(pointer p, const Predicate pred=AllSuffice())
       : _size(sizeof(value_type))
       , _pointer(reinterpret_cast<uint8_t*>(p))
@@ -88,7 +96,7 @@ namespace apuex {
         _pos--;
         if (0 == _pos) {
           _pos = _size;
-          if (_predicate(*_pointer)) return Completed;
+          if (_predicate(*reinterpret_cast<pointer>(_pointer))) return Completed;
           else return Rejected;
         }
         else return Consumed;
@@ -99,7 +107,7 @@ namespace apuex {
         _pos++;
         if (_size == _pos) {
           _pos = 0;
-          if (_predicate(*_pointer)) return Completed;
+          if (_predicate(*reinterpret_cast<pointer>(_pointer))) return Completed;
           else return Rejected;
         }
         else return Consumed;
