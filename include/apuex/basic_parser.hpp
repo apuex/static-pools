@@ -137,6 +137,22 @@ namespace apuex {
       }
     }
 
+  inline size_t encode(uint8_t* const bytes, const size_t maxBytesLength) {
+    size_t i = 0;
+    for(CodecState state = Produced;
+        Completed != state && i != maxBytesLength;
+        ++i) state = encode(*(bytes + i));
+    return i;
+  }
+
+  inline size_t decode(const uint8_t* const bytes, const size_t maxBytesLength) {
+    size_t i = 0;
+    for(CodecState state = Consumed;
+        Completed != state && i != maxBytesLength;
+        ++i) state = decode(*(bytes + i));
+    return i;
+  }
+
     inline const_reference value() { return reinterpret_cast<const_reference>(*_pointer); }
     inline void value(const_reference v) { reinterpret_cast<reference>(*_pointer) = v; }
 
