@@ -1,6 +1,8 @@
 #include <apuex/modbus.hpp>
+#include <iostream>
 #include <stdio.h>
 
+using namespace std;
 using namespace apuex;
 
 template<typename T>
@@ -9,7 +11,10 @@ struct all {
 };
 
 int main(int argc, char *argv[]) {
-  printf("sizeof(ModbusRequest) = %lu\n", sizeof(ModbusRequest));
+  cout 
+        << "sizeof(ModbusRequest) = "
+        << sizeof(ModbusRequest)
+        << endl;
   size_t i;
   uint8_t ba[] = { 0x01, 0x03, 0x04, 0x4B, 0x00, 0x05, 0xF4, 0xEF };
   uint8_t b = 0xff;

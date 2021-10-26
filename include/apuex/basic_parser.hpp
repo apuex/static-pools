@@ -227,20 +227,28 @@ namespace apuex {
       switch(_pos) {
         case 0: // length
           state = _lengthParser.decode(b);
-          if(Completed == state) {
+          if (Completed == state) {
+            if (_size == _index) {
+              reset();
+              return Completed;
+            }
+            else {
+              _pointer->resize(_size);
+              _element = (*_pointer)[_index];
+            }
             ++_pos; return Consumed;
           }
           return state;
         case 1: // elements
-          if(_size == _index) {
-            return Completed;
-          }
           state = _elementParser.decode(b);
-          if(Completed == state) {
-            ++_index; _elementParser.reset();
-          }
-          if(_size == _index) {
-            reset(); return Completed;
+          if (Completed == state) {
+            (*_pointer)[_index] = _element;
+            ++_index;
+            _elementParser.reset();
+            if (_size == _index) {
+              reset(); return Completed;
+            }
+            state = Consumed;
           }
           return state;
         default:
@@ -256,19 +264,28 @@ namespace apuex {
         case 0: // length
           state = _lengthParser.encode(b);
           if(Completed == state) {
+            if (_size == _index) {
+              reset();
+              return Completed;
+            }
+            else {
+              _element = (*_pointer)[_index];
+            }
             ++_pos; return Produced;
           }
           return state;
         case 1: // elements
-          if(_size == _index) {
-            return Completed;
-          }
           state = _elementParser.encode(b);
-          if(Completed == state) {
-            ++_index; _elementParser.reset();
-          }
-          if(_size == _index) {
-            reset(); return Completed;
+          if (Completed == state) {
+            ++_index;
+            _elementParser.reset();
+            if (_size == _index) {
+              reset(); return Completed;
+            }
+            else {
+              _element = (*_pointer)[_index];
+            }
+            state = Produced;
           }
           return state;
         default:
