@@ -61,6 +61,7 @@ set(unit_tests
   modbus-request-test
   modbus-response-test
   ring-buffer-test
+  vector-parse-test
 )
 
 if(ENABLE_TEST)

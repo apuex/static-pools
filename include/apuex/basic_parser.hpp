@@ -2,7 +2,7 @@
 #define __APUEX_BASIC_PARSER_CXX_INCLUDED_
 
 #include <apuex/stddef_config.h>
-
+#include <vector>
 
 namespace apuex {
   enum CodecState { Consumed, Produced, Completed, NoContent, Rejected };
@@ -77,9 +77,13 @@ namespace apuex {
       return *this;
     }
 
+    inline void reset() {
+      _pos = BigEndian ? _size : 0;
+    }
+
     inline void offer(pointer p) {
       _pointer = reinterpret_cast<uint8_t*>(p);
-      _pos = BigEndian ? _size : 0;
+      reset();
     }
 
     inline void offer(pointer p, const Predicate pred) {
@@ -163,6 +167,166 @@ namespace apuex {
     size_t _pos;
   };
 
+  template <typename Type, typename LengthType, typename Predicate=NullPredicate<std::vector<Type> >, bool BigEndian = false>
+  class BasicVectorParser {
+   public:
+    typedef Type ElementType;
+    typedef BasicParser<Type, NullPredicate<Type>, BigEndian> ElementParser;
+    typedef BasicParser<LengthType, NullPredicate<Type>, BigEndian> LengthParser;
+    typedef std::vector<Type> value_type;
+    typedef value_type* pointer;
+    typedef const value_type* const_pointer;
+    typedef value_type& reference;
+    typedef const value_type& const_reference;
+    typedef NullPredicate<value_type> AllSuffice;
+
+    BasicVectorParser(reference p, const Predicate pred=AllSuffice())
+      : _size(p.size())
+      , _element()
+      , _index(0)
+      , _pointer(&p)
+      , _predicate(pred)
+      , _pos(0)
+      , _lengthParser(_size)
+      , _elementParser(_element)
+    {
+    }
+    BasicVectorParser(pointer p, const Predicate pred=AllSuffice())
+      : _size(p->size())
+      , _element()
+      , _index(0)
+      , _pointer(p)
+      , _predicate(pred)
+      , _pos(0)
+      , _lengthParser(_size)
+      , _elementParser(_element)
+    {
+    }
+    BasicVectorParser(const BasicVectorParser& r)
+      : _size(r._size)
+      , _element(r._element)
+      , _index(r._index)
+      , _pointer(r._pointer)
+      , _predicate(r._predicate)
+      , _pos(r._pos) 
+      , _lengthParser(_size)
+      , _elementParser(_element) {
+    }
+    virtual ~BasicVectorParser() { }
+
+    BasicVectorParser& operator=(const BasicVectorParser& r) {
+      this->_size = r._size;
+      this->_pointer = r._pointer;
+      this->_predicate = r._predicate;
+      this->_pos = r._pos;
+      return *this;
+    }
+
+    inline CodecState decode(const uint8_t& b) {
+      CodecState state = Rejected;
+      switch(_pos) {
+        case 0: // length
+          state = _lengthParser.decode(b);
+          if(Completed == state) {
+            ++_pos; return Consumed;
+          }
+          return state;
+        case 1: // elements
+          if(_size == _index) {
+            return Completed;
+          }
+          state = _elementParser.decode(b);
+          if(Completed == state) {
+            ++_index; _elementParser.reset();
+          }
+          if(_size == _index) {
+            reset(); return Completed;
+          }
+          return state;
+        default:
+          reset();
+          break;
+      }
+      return Rejected;
+    }
+
+    inline CodecState encode(uint8_t& b) {
+      CodecState state = NoContent;
+      switch(_pos) {
+        case 0: // length
+          state = _lengthParser.encode(b);
+          if(Completed == state) {
+            ++_pos; return Produced;
+          }
+          return state;
+        case 1: // elements
+          if(_size == _index) {
+            return Completed;
+          }
+          state = _elementParser.encode(b);
+          if(Completed == state) {
+            ++_index; _elementParser.reset();
+          }
+          if(_size == _index) {
+            reset(); return Completed;
+          }
+          return state;
+        default:
+          reset();
+          break;
+      }
+      return NoContent;
+    }
+
+    void reset() {
+      _pos = 0;
+      _size = 0;
+      _index = 0;
+      _lengthParser.reset();
+      _elementParser.reset();
+    }
+
+    inline void offer(pointer p) {
+      _pointer = reinterpret_cast<uint8_t*>(p);
+      _pos = BigEndian ? _size : 0;
+    }
+
+    inline void offer(pointer p, const Predicate pred) {
+      offer(p);
+      _predicate = pred;
+    }
+
+    inline value_type take() { return value(); }
+
+    inline size_t encode(uint8_t* const bytes, const size_t maxBytesLength) {
+      size_t i = 0;
+      for(CodecState state = Produced;
+          Completed != state && i != maxBytesLength;
+          ++i) state = encode(*(bytes + i));
+      return i;
+    }
+
+    inline size_t decode(const uint8_t* const bytes, const size_t maxBytesLength) {
+      size_t i = 0;
+      for(CodecState state = Consumed;
+          Completed != state && i != maxBytesLength;
+          ++i) state = decode(*(bytes + i));
+      return i;
+    }
+
+    inline const_reference value() { return reinterpret_cast<const_reference>(*_pointer); }
+    inline void value(const_reference v) { reinterpret_cast<reference>(*_pointer) = v; }
+
+   private:
+    LengthType _size;
+    ElementType _element;
+    LengthType _index;
+    pointer _pointer;
+    Predicate _predicate;
+    size_t _pos;
+    LengthParser _lengthParser;
+    ElementParser _elementParser;
+  };
 }
 
 #endif /* __APUEX_BASIC_PARSER_CXX_INCLUDED_ */
