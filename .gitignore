@@ -38,4 +38,4 @@ dist-*
 vs
 Debug
 Release
-
+cmake-build-*
