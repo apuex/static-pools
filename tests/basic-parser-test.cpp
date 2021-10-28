@@ -4,6 +4,7 @@
 
 using namespace std;
 using namespace apuex;
+using namespace apuex::modbus;
 
 template<typename T>
 struct all {

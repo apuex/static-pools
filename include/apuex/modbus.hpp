@@ -4,6 +4,7 @@
 
 namespace apuex {
 
+namespace modbus {
   /* MODBUS request, response and byte array */
   struct ModbusRequest {
   public:
@@ -487,6 +488,8 @@ namespace apuex {
     uint16_t _crc16_flag;
     uint16_t _crc16_value;
   };
+
+} /* namespace modbus */
 
 } /* namespace apuex */
 

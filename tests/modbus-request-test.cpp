@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 using namespace apuex;
+using namespace apuex::modbus;
 
 int main(int argc, char *argv[]) {
   size_t i;
