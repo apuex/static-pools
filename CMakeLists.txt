@@ -62,6 +62,8 @@ set(unit_tests
   modbus-response-test
   ring-buffer-test
   vector-parse-test
+  ydt1363-checksum-test
+  ydt1363-length-test
 )
 
 if(ENABLE_TEST)
