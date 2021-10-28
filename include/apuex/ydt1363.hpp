@@ -1,6 +1,7 @@
 #ifndef __APUEX_YDT1363_CXX_INCLUDED_
 #define __APUEX_YDT1363_CXX_INCLUDED_
 #include <apuex/basic_parser.hpp>
+#include <exception>
 #include <iostream>
 #include <iomanip>
 
@@ -33,6 +34,19 @@ uint16_t checksum(const uint8_t *bytes, uint16_t len) {
       << std::endl;
 
   return (1 + (~sum));
+}
+
+uint8_t fromHalfByte(uint8_t c) {
+  if(9 >= c) return (c + 0x30);
+  else if(0xA <= c && 0xF >= c) return (c + 0x37);
+  else throw std::out_of_range("c > 0xF, which is not possible, since input is 4 bits.");
+}
+
+uint8_t toHalfByte(uint8_t c) {
+  if(0x30 <= c && 0x39 >= c) return (c - 0x30);
+  else if(0x41 <= c && 0x46 >= c) return (c - 0x37);
+  else if(0x61 <= c && 0x66 >= c) return (c - 0x57);
+  else throw std::out_of_range("c is Not a valid hex char ([0-9A-Ba-b]).");
 }
 
 } /* namespace YDT1363 */

@@ -64,6 +64,7 @@ set(unit_tests
   vector-parse-test
   ydt1363-checksum-test
   ydt1363-length-test
+  ydt1363-hexconv-test
 )
 
 if(ENABLE_TEST)
