@@ -47,13 +47,13 @@ inline uint16_t fromHexChars(
   uint16_t i = 0;
   if(  0 == charBuffLen
     || 0 == bytesLen) return 0;
-  for(i = 0; i != charBuffLen && ((i/2) != bytesLen); i += 2) {
-    *(bytes + (i/2)) = 0xffff & (
-      (toHalfByte(chars[i]) << 4)
-      & (toHalfByte(chars[i + 1]))
+  for(i = 0; i != bytesLen && ((i*2) != charBuffLen); ++i) {
+    bytes[i] = 0xff & (
+      (toHalfByte(chars[2*i]) << 4)
+      | (toHalfByte(chars[2*i + 1]))
       );
   }
-  return (i / 2);
+  return i;
 }
 
 inline uint16_t toHexChars(
@@ -64,8 +64,8 @@ inline uint16_t toHexChars(
   if(  0 == charBuffLen
     || 0 == bytesLen) return 0;
   for(i = 0; i != bytesLen && ((2*i) != charBuffLen); ++i) {
-    *(chars + 2*i + 1) = fromHalfByte(0xf & (*(bytes + i)     ));
-    *(chars + 2*i    ) = fromHalfByte(0xf & (*(bytes + i) >> 4));
+    chars [2*i + 1] = fromHalfByte(0xf & (bytes[i]     ));
+    chars [2*i    ] = fromHalfByte(0xf & (bytes[i] >> 4));
   }
   return (2 * i);
 }

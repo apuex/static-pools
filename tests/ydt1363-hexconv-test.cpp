@@ -48,7 +48,7 @@ bool testHexCharsConvert() {
   size_t i;
   bool result = true;
   uint8_t bytes[] = {
-    0xCA, 0xFE, 0xBA, 0xBE, 0xDE, 0xED, 0xBE, 0xEF
+    0xCA, 0xFE, 0xBA, 0xBE, 0xDE, 0xAD, 0xBE, 0xEF
   };
   uint8_t hexChars[] = {
     'C', 'A', 'F', 'E', 'B', 'A', 'B', 'E',
@@ -59,7 +59,7 @@ bool testHexCharsConvert() {
   result = result 
     && (sizeof(bytes) == YDT1363::fromHexChars(bytesOut, sizeof(bytesOut), hexChars, sizeof(hexChars)));
   for(i = 0; i != sizeof(bytes); ++i) {
-    result = result && (bytes[i] == hexOut[i]);
+    result = result && (bytes[i] == bytesOut[i]);
     cout << "fromHexChars(): 0x" 
         << hex
         << setw(2) 
