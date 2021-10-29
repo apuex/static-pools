@@ -25,6 +25,7 @@ int main(int argc, char *argv[]) {
       << hex
       << setw(4)
       << setfill('0')
+      << uppercase 
       << result
       << endl;
 

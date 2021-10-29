@@ -24,29 +24,50 @@ uint16_t checksum(const uint8_t *bytes, uint16_t len) {
   for(uint16_t i = 0; i != len; ++i) {
     sum += *(bytes + i);
   }
-  std::cout
-      << "sum = 0x"
-      << std::hex
-      << std::setw(4)
-      << std::setfill('0')
-      << std::uppercase
-      << sum
-      << std::endl;
-
   return (1 + (~sum));
 }
 
-uint8_t fromHalfByte(uint8_t c) {
+inline uint8_t fromHalfByte(uint8_t c) {
   if(9 >= c) return (c + 0x30);
   else if(0xA <= c && 0xF >= c) return (c + 0x37);
   else throw std::out_of_range("c > 0xF, which is not possible, since input is 4 bits.");
 }
 
-uint8_t toHalfByte(uint8_t c) {
+inline uint8_t toHalfByte(uint8_t c) {
   if(0x30 <= c && 0x39 >= c) return (c - 0x30);
   else if(0x41 <= c && 0x46 >= c) return (c - 0x37);
   else if(0x61 <= c && 0x66 >= c) return (c - 0x57);
   else throw std::out_of_range("c is Not a valid hex char ([0-9A-Ba-b]).");
+}
+
+inline uint16_t fromHexChars(
+  uint8_t *bytes, uint16_t bytesLen,
+  uint8_t *chars, uint16_t charBuffLen
+  ) {
+  uint16_t i = 0;
+  if(  0 == charBuffLen
+    || 0 == bytesLen) return 0;
+  for(i = 0; i != charBuffLen && ((i/2) != bytesLen); i += 2) {
+    *(bytes + (i/2)) = 0xffff & (
+      (toHalfByte(chars[i]) << 4)
+      & (toHalfByte(chars[i + 1]))
+      );
+  }
+  return (i / 2);
+}
+
+inline uint16_t toHexChars(
+  uint8_t *chars, uint16_t charBuffLen, 
+  uint8_t *bytes, uint16_t bytesLen
+  ) {
+  uint16_t i = 0;
+  if(  0 == charBuffLen
+    || 0 == bytesLen) return 0;
+  for(i = 0; i != bytesLen && ((2*i) != charBuffLen); ++i) {
+    *(chars + 2*i + 1) = fromHalfByte(0xf & (*(bytes + i)     ));
+    *(chars + 2*i    ) = fromHalfByte(0xf & (*(bytes + i) >> 4));
+  }
+  return (2 * i);
 }
 
 } /* namespace YDT1363 */

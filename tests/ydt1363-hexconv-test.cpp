@@ -5,7 +5,7 @@
 using namespace std;
 using namespace apuex;
 
-int main(int argc, char *argv[]) {
+bool testHexHalfByteConvert() {
   size_t i; // to be compatible with VC6.0
   bool result = true;
   uint8_t halfByte[] = {
@@ -41,5 +41,49 @@ int main(int argc, char *argv[]) {
         << endl;
   } 
 
-  return !result;
+  return result;
+}
+
+bool testHexCharsConvert() {
+  size_t i;
+  bool result = true;
+  uint8_t bytes[] = {
+    0xCA, 0xFE, 0xBA, 0xBE, 0xDE, 0xED, 0xBE, 0xEF
+  };
+  uint8_t hexChars[] = {
+    'C', 'A', 'F', 'E', 'B', 'A', 'B', 'E',
+    'D', 'E', 'A', 'D', 'B', 'E', 'E', 'F'
+  };
+  uint8_t bytesOut[8] = {0};
+  uint8_t hexOut[16] = {0};
+  result = result 
+    && (sizeof(bytes) == YDT1363::fromHexChars(bytesOut, sizeof(bytesOut), hexChars, sizeof(hexChars)));
+  for(i = 0; i != sizeof(bytes); ++i) {
+    result = result && (bytes[i] == hexOut[i]);
+    cout << "fromHexChars(): 0x" 
+        << hex
+        << setw(2) 
+        << setfill('0') 
+        << uppercase
+        << (0xff & bytesOut[i])
+        << ", result = " << result 
+        << endl;
+  }
+  result = result 
+    && (sizeof(hexChars) == YDT1363::toHexChars(hexOut, sizeof(hexOut), bytes, sizeof(bytes)));
+  for(i = 0; i != sizeof(hexChars); ++i) {
+    result = result && (hexChars[i] == hexOut[i]);
+    cout << "toHexChars(): " 
+        << hexOut[i]
+        << ", result = " << result 
+        << endl;
+  }
+
+  return result;
+}
+
+int main(int argc, char *argv[]) {
+  return !( testHexHalfByteConvert()
+         && testHexCharsConvert()
+         );
 }
