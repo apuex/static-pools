@@ -48,8 +48,8 @@ inline uint16_t fromHexChars(
   if(  0 == charBuffLen
     || 0 == bytesLen) return 0;
   for(i = 0; i != bytesLen && ((i*2) != charBuffLen); ++i) {
-    bytes[i] = 0xff & (
-      (toHalfByte(chars[2*i]) << 4)
+    bytes[i] = 0xff & 
+      ( (toHalfByte(chars[2*i]) << 4)
       | (toHalfByte(chars[2*i + 1]))
       );
   }
