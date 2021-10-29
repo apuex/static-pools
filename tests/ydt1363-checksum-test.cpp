@@ -1,6 +1,7 @@
 #include <apuex/ydt1363.hpp>
 #include <iostream>
 #include <iomanip>
+#include <string>
 
 using namespace std;
 using namespace apuex;
@@ -18,7 +19,7 @@ int main(int argc, char *argv[]) {
 
   cout
       << "bytes = '"
-      << bytes
+      << string(reinterpret_cast<const char*>(bytes), sizeof(bytes))
       << "'"
       << endl
       << "YDT1363::checksum() = 0x"
