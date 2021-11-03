@@ -181,7 +181,7 @@ namespace apuex {
     typedef NullPredicate<value_type> AllSuffice;
 
     BasicVectorParser(reference p, const Predicate pred=AllSuffice())
-      : _size(p.size())
+      : _size(static_cast<LengthType>(p.size()))
       , _element()
       , _index(0)
       , _pointer(&p)
