@@ -172,7 +172,7 @@ namespace apuex {
    public:
     typedef Type ElementType;
     typedef BasicParser<Type, NullPredicate<Type>, BigEndian> ElementParser;
-    typedef BasicParser<LengthType, NullPredicate<Type>, BigEndian> LengthParser;
+    typedef BasicParser<LengthType, NullPredicate<LengthType>, BigEndian> LengthParser;
     typedef std::vector<Type> value_type;
     typedef value_type* pointer;
     typedef const value_type* const_pointer;

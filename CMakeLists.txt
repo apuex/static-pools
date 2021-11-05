@@ -61,6 +61,7 @@ set(unit_tests
   modbus-request-test
   modbus-response-test
   ring-buffer-test
+  struct-vector-parse-test
   vector-parse-test
   ydt1363-checksum-test
   ydt1363-length-test
