@@ -4,6 +4,7 @@
 #include <cstddef>
 #if HAVE_CSTDINT==1
 #include <cstdint>
+#include <cstdbool>
 #else
 
 typedef signed char        int8_t;
@@ -24,7 +25,7 @@ typedef UINT64             uint64_t;
 
 #endif
 
-typedef uint32_t apuex_bool;
+typedef enum { apuex_false=0, apuex_true=1 } apuex_bool;
 
 #endif /* __APUEX_STD_DEF_CONFIG_INCLUDED_ */
 
