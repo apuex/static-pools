@@ -21,7 +21,6 @@ if(("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang") OR ("${CMAKE_CXX_COMPILER_ID}" 
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   list(APPEND CUSTOM_CXX_COMPILER_FLAGS
     /EHsc
-    /MD
     /utf-8
     )
 endif()

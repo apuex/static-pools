@@ -1,5 +1,5 @@
 cmake -G "NMake Makefiles" ^
- -DCMAKE_CXX_FLAGS="/MD /GS-" ^
+ -DCMAKE_CXX_FLAGS="/MT /GS-" ^
  -DCMAKE_CXX_FLAGS_DEBUG="/Zi /DDEBUG" ^
  -DCMAKE_CXX_FLAGS_RELEASE="/O2 /DNDEBUG" ^
  -DCMAKE_EXE_LINKER_FLAGS="/machine:amd64" ^
