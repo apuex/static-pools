@@ -5,6 +5,6 @@ cmake -G "NMake Makefiles" ^
  -DCMAKE_MODULE_LINKER_FLAGS="/machine:IX86 /subsystem:windows,5.02" ^
  -DCMAKE_STATIC_LINKER_FLAGS="/machine:IX86 /subsystem:windows,5.02" ^
  -DCMAKE_BUILD_TYPE=Release ^
- -DCMAKE_INSTALL_PREFIX=C:\usr ^
+ -DCMAKE_INSTALL_PREFIX=E:\usr32 ^
  ..
 

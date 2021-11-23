@@ -1,10 +1,14 @@
 #ifndef __APUEX_STD_DEF_CONFIG_INCLUDED_
 #define __APUEX_STD_DEF_CONFIG_INCLUDED_
 
-#include <cstddef>
+#ifdef _MSC_VER
+#include <windows.h>
+#endif /*_MSC_VER */
+
+#include <stddef.h>
 #if HAVE_CSTDINT==1
-#include <cstdint>
-#include <cstdbool>
+#include <stdint.h>
+#include <stdbool.h>
 #else
 
 typedef signed char        int8_t;
@@ -18,9 +22,11 @@ typedef unsigned int       uint32_t;
 typedef long long          int64_t;
 typedef unsigned long long uint64_t;
 #else /*_MSC_VER */
-#include <windows.h>
 typedef INT64              int64_t;
 typedef UINT64             uint64_t;
+#ifndef __cplusplus
+typedef enum { false=0, true=1 } bool;
+#endif
 #endif /*_MSC_VER */
 
 #endif
