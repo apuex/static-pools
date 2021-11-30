@@ -32,6 +32,8 @@ namespace apuex {
 
   template <typename T>
   struct NullPredicate {
+    NullPredicate() {}
+    NullPredicate(T& v) {}
     bool operator()(const T& value) const { return true; }
   };
 
