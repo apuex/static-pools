@@ -56,6 +56,7 @@ set(unit_tests
   allocator-allocate-test
   allocator-binary-tree-test
   basic-parser-test
+  byte-buffer-test
   modbus-bytes-test
   modbus-request-test
   modbus-response-test
