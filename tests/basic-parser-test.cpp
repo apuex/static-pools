@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
   req.length = 0x0005;
   req.crc16 = 0xf4ef;
 
-  ModbusResquestParser parser(req);
+  ModbusRequestParser parser(req);
 
   printf("[ ");
   do {

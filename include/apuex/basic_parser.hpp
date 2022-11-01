@@ -93,7 +93,7 @@ namespace apuex {
       _predicate = pred;
     }
 
-    inline value_type take() { return value(); }
+    inline value_type take() const { return value(); }
 
     inline CodecState decode(const uint8_t& b) {
       if (BigEndian) {
@@ -129,7 +129,7 @@ namespace apuex {
           _pos = _size;
           return Completed;
         }
-        else return Consumed;
+        else return Produced;
       }
       else {
         if (_size == _pos) return NoContent;
@@ -139,7 +139,7 @@ namespace apuex {
           _pos = 0;
           return Completed;
         }
-        else return Consumed;
+        else return Produced;
       }
     }
 
@@ -159,11 +159,11 @@ namespace apuex {
     return i;
   }
 
-    inline const_reference value() { return reinterpret_cast<const_reference>(*_pointer); }
+    inline const_reference value() const { return reinterpret_cast<const_reference>(*_pointer); }
     inline void value(const_reference v) { reinterpret_cast<reference>(*_pointer) = v; }
 
   private:
-    const size_t _size;
+    size_t _size;
     uint8_t *_pointer;
     Predicate _predicate;
     size_t _pos;

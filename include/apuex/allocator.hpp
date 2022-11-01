@@ -105,7 +105,9 @@ namespace apuex {
   }
 
   template <typename T> void allocator<T>::construct(typename allocator<T>::pointer location, const T& value) {
-    std::cout << "construct <" << typeid(value_type).name() << ">: initial value is " << value << std::endl;
+    std::cout << "construct <" << typeid(value_type).name() 
+		//<< ">: initial value is " << value 
+		<< std::endl;
     new ((void*)location) T(value);
   }
 

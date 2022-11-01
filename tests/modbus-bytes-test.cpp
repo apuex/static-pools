@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
  
   input.offer(bytes, sizeof(bytes));
 
-  ModbusByteArrayParser parser(input, byte_equal(0x08));
+  ModbusByteArrayParser parser(input, resp_length_predicate(0x08));
 
   printf("[ ");
   bool eq_bytes_out = true;
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
   } 
   printf("]\n");
 
-  parser.offer(output, byte_equal(0x08));
+  parser.offer(output, resp_length_predicate(0x08));
   for (i = 0, state = Consumed; i != sizeof(bytes_in) && Completed != state && Rejected != state; ++i ) {
     state = parser.decode(bytes_in[i]);
   } 

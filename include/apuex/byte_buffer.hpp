@@ -16,6 +16,14 @@ class byte_buffer {
      { }
   virtual ~byte_buffer() { }
 
+  byte_buffer& operator=(const byte_buffer& rv) {
+    _buffer_size = rv._buffer_size;
+    _buffer = rv._buffer;
+    _element_count = rv._element_count;
+    _pos = rv._pos;
+    return *this;
+  }
+
   // little endian
   bool readLittleEndian(uint8_t &v) {
     return readLittleEndian(&v, sizeof(uint8_t));
@@ -90,8 +98,8 @@ class byte_buffer {
     return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(uint8_t));
   }
 
-  bool writeBigEndian(uint8_t &v) {
-    return writeBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(uint8_t));
+  bool writeBigEndian(const uint8_t &v) {
+    return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(uint8_t));
   }
 
   bool readBigEndian(uint16_t &v) {
@@ -144,7 +152,7 @@ class byte_buffer {
     return true;
   }
 
-  size_t writeBigEndian(const uint8_t *p, size_t size) {
+  bool writeBigEndian(const uint8_t *p, size_t size) {
     if(size > (_buffer_size - _element_count)) return false;
     for(size_t i = 0; i != size; ++i) {
       *(_buffer + _pos + i) = *(p + size - 1 - i);
@@ -157,6 +165,7 @@ class byte_buffer {
   bool empty() const { return (0 == _element_count); }
   bool full() const { return (_buffer_size == _element_count); }
   void clear() {
+    _pos = 0;
     _element_count = 0;
   }
 
@@ -171,11 +180,10 @@ class byte_buffer {
      , _element_count(rv._element_count)
      , _pos(rv._pos)
      { }
-  byte_buffer& operator=(const byte_buffer& rv) { return *this; }
   bool operator==(const byte_buffer& rv) const { return false; }
 
  private:
-  const size_t _buffer_size;
+  size_t _buffer_size;
   uint8_t* _buffer;
   size_t _element_count;
   size_t _pos;

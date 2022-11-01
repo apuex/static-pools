@@ -18,6 +18,19 @@ class ring_buffer {
      { }
   virtual ~ring_buffer() { delete[] _buffer; }
 
+  size_t peek(value_type* rbuf, size_t to_read) {
+    if(0 == _element_count) return 0;
+    else {
+      size_t i = 0;
+      size_t peek_pos = _rd_pos;
+      for(i = 0; i != to_read && i != _element_count; ++i) {
+        *(rbuf + i) = *(_buffer + peek_pos); ++peek_pos;
+        if(_buffer_size == peek_pos) peek_pos = 0;
+      }
+      return i;
+    }
+  }
+
   size_t read(value_type* rbuf, size_t to_read) {
     if(0 == _element_count) return 0;
     else {
@@ -30,6 +43,7 @@ class ring_buffer {
       return i;
     }
   }
+
 
   size_t write(const value_type* const wbuf, size_t to_write) {
     if(_buffer_size == _element_count) return 0;

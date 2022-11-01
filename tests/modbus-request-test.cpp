@@ -11,16 +11,10 @@ int main(int argc, char *argv[]) {
   uint8_t b = 0xff;
   CodecState state;
 
-  struct ModbusRequest input;
+  struct ModbusRequest input(0x01, 0x03, 0x044b, 0x005);
   struct ModbusRequest output;
   
-  input.address = 0x01;
-  input.command = 0x03;
-  input.startOfRegister = 0x044b;
-  input.length = 0x0005;
-  input.crc16 = 0xeff4;
-
-  ModbusResquestParser parser(input);
+  ModbusRequestParser parser(input);
 
   printf("[ ");
   bool eq = true;
