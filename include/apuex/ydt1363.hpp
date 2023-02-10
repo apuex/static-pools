@@ -193,6 +193,7 @@ public:
 #else
     _length = fromLength(length) / 2;
 #endif
+    if(buf.element_count() != _length) result = false; // inconsistency
     for(uint16_t i = 0; result && i != _length; ++i) {
       result = buf.readBigEndian(_bytes[i]);
     }
@@ -314,7 +315,11 @@ public:
       }
       return Consumed;
     case 1:
-      if((0x30 <= b && b <= 0x66) || 0x20 == b) {
+      if( (0x30 <= b && b <= 0x39)
+       || (0x41 <= b && b <= 0x46)
+       || (0x61 <= b && b <= 0x46)
+       || (0x20 == b))
+      {
         // acceptable, append to buffer.
         if(_buffer.writeBigEndian(b)) {
           return Consumed;
@@ -327,7 +332,8 @@ public:
         if(4 < _buffer.element_count()) {
           uint16_t chksum = checksum(_bufferContent, static_cast<uint16_t>(_buffer.element_count() - 4));
           uint8_t chksumBytes[sizeof(uint16_t)];
-          uint16_t count = fromHexChars(chksumBytes, sizeof(chksumBytes), _bufferContent + _buffer.element_count() - 4, 4);
+          uint16_t count = 0;
+          count = fromHexChars(chksumBytes, sizeof(chksumBytes), _bufferContent + _buffer.element_count() - 4, 4);
           if(sizeof(uint16_t) == count) {
             byte_buffer buf(chksumBytes, 0, sizeof(chksumBytes), sizeof(chksumBytes));
             uint16_t chksumr;

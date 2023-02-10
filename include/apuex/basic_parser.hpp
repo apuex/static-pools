@@ -2,6 +2,7 @@
 #define __APUEX_BASIC_PARSER_CXX_INCLUDED_
 
 #include <apuex/stddef_config.h>
+#include <iostream>
 #include <vector>
 
 namespace apuex {
@@ -346,6 +347,8 @@ namespace apuex {
     LengthParser _lengthParser;
     ElementParser _elementParser;
   };
+  
+  std::ostream& operator<<(std::ostream& os, const CodecState v);
 }
 
 #endif /* __APUEX_BASIC_PARSER_CXX_INCLUDED_ */

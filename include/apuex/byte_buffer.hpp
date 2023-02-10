@@ -14,6 +14,12 @@ class byte_buffer {
      , _element_count(elements)
      , _pos(offset)
      { }
+  byte_buffer(const byte_buffer& rv)
+    : _buffer_size(rv._buffer_size)
+    , _buffer(rv._buffer)
+    , _element_count(rv._element_count)
+    , _pos(rv._pos)
+  { }
   virtual ~byte_buffer() { }
 
   byte_buffer& operator=(const byte_buffer& rv) {
@@ -25,12 +31,28 @@ class byte_buffer {
   }
 
   // little endian
+  bool readUInt8LE(uint8_t &v) {
+    return readLittleEndian(&v, sizeof(uint8_t));
+  }
+
+  bool writeUInt8LE(const uint8_t &v) {
+    return writeLittleEndian(&v, sizeof(uint8_t));
+  }
+
   bool readLittleEndian(uint8_t &v) {
     return readLittleEndian(&v, sizeof(uint8_t));
   }
 
   bool writeLittleEndian(const uint8_t &v) {
     return writeLittleEndian(&v, sizeof(uint8_t));
+  }
+
+  bool readUInt16LE(uint16_t &v) {
+    return readLittleEndian(reinterpret_cast<uint8_t*>(&v), sizeof(uint16_t));
+  }
+
+  bool writeUInt16LE(const uint16_t &v) {
+    return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(uint16_t));
   }
 
   bool readLittleEndian(uint16_t &v) {
@@ -41,12 +63,28 @@ class byte_buffer {
     return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(uint16_t));
   }
 
+  bool readUInt32LE(uint32_t &v) {
+    return readLittleEndian(reinterpret_cast<uint8_t*>(&v), sizeof(uint32_t));
+  }
+
+  bool writeUInt32LE(const uint32_t &v) {
+    return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(uint32_t));
+  }
+
   bool readLittleEndian(uint32_t &v) {
     return readLittleEndian(reinterpret_cast<uint8_t*>(&v), sizeof(uint32_t));
   }
 
   bool writeLittleEndian(const uint32_t &v) {
     return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(uint32_t));
+  }
+
+  bool readUInt64LE(uint64_t &v) {
+    return readLittleEndian(reinterpret_cast<uint8_t*>(&v), sizeof(uint64_t));
+  }
+
+  bool writeUInt64LE(const uint64_t &v) {
+    return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(uint64_t));
   }
 
   bool readLittleEndian(uint64_t &v) {
@@ -57,12 +95,92 @@ class byte_buffer {
     return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(uint64_t));
   }
 
+  bool readInt8LE(int8_t &v) {
+    return readLittleEndian(reinterpret_cast<uint8_t*>(&v), sizeof(int8_t));
+  }
+
+  bool writeInt8LE(const int8_t &v) {
+    return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(int8_t));
+  }
+
+  bool readLittleEndian(int8_t &v) {
+    return readLittleEndian(reinterpret_cast<uint8_t*>(&v), sizeof(int8_t));
+  }
+
+  bool writeLittleEndian(const int8_t &v) {
+    return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(int8_t));
+  }
+
+  bool readInt16LE(int16_t &v) {
+    return readLittleEndian(reinterpret_cast<uint8_t*>(&v), sizeof(int16_t));
+  }
+
+  bool writeInt16LE(const int16_t &v) {
+    return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(int16_t));
+  }
+
+  bool readLittleEndian(int16_t &v) {
+    return readLittleEndian(reinterpret_cast<uint8_t*>(&v), sizeof(int16_t));
+  }
+
+  bool writeLittleEndian(const int16_t &v) {
+    return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(int16_t));
+  }
+
+  bool readInt32LE(int32_t &v) {
+    return readLittleEndian(reinterpret_cast<uint8_t*>(&v), sizeof(int32_t));
+  }
+
+  bool writeInt32LE(const int32_t &v) {
+    return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(int32_t));
+  }
+
+  bool readLittleEndian(int32_t &v) {
+    return readLittleEndian(reinterpret_cast<uint8_t*>(&v), sizeof(int32_t));
+  }
+
+  bool writeLittleEndian(const int32_t &v) {
+    return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(int32_t));
+  }
+
+  bool readInt64LE(int64_t &v) {
+    return readLittleEndian(reinterpret_cast<uint8_t*>(&v), sizeof(int64_t));
+  }
+
+  bool writeInt64LE(const int64_t &v) {
+    return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(int64_t));
+  }
+
+  bool readLittleEndian(int64_t &v) {
+    return readLittleEndian(reinterpret_cast<uint8_t*>(&v), sizeof(int64_t));
+  }
+
+  bool writeLittleEndian(const int64_t &v) {
+    return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(int64_t));
+  }
+
+  bool readFloat32LE(float &v) {
+    return readLittleEndian(reinterpret_cast<uint8_t*>(&v), sizeof(float));
+  }
+
+  bool writeFloat32LE(const float &v) {
+    return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(float));
+  }
+
   bool readLittleEndian(float &v) {
     return readLittleEndian(reinterpret_cast<uint8_t*>(&v), sizeof(float));
   }
 
   bool writeLittleEndian(const float &v) {
     return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(float));
+  }
+
+  bool readFloat64LE(double &v) {
+    return readLittleEndian(reinterpret_cast<uint8_t*>(&v), sizeof(double));
+  }
+
+  bool writeFloat64LE(const double &v) {
+    return writeLittleEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(double));
   }
 
   bool readLittleEndian(double &v) {
@@ -174,12 +292,6 @@ class byte_buffer {
   size_t pos() const { return _pos; }
 
  private:
-  byte_buffer(const byte_buffer& rv)
-     : _buffer_size(rv._buffer_size)
-     , _buffer(rv._buffer)
-     , _element_count(rv._element_count)
-     , _pos(rv._pos)
-     { }
   bool operator==(const byte_buffer& rv) const { return false; }
 
  private:
