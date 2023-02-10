@@ -212,12 +212,28 @@ class byte_buffer {
   }
 
   // big endian
+  bool readUInt8BE(uint8_t &v) {
+    return readBigEndian(&v, sizeof(uint8_t));
+  }
+
+  bool writeUInt8BE(const uint8_t &v) {
+    return writeBigEndian(&v, sizeof(uint8_t));
+  }
+
   bool readBigEndian(uint8_t &v) {
-    return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(uint8_t));
+    return readBigEndian(&v, sizeof(uint8_t));
   }
 
   bool writeBigEndian(const uint8_t &v) {
-    return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(uint8_t));
+    return writeBigEndian(&v, sizeof(uint8_t));
+  }
+
+  bool readUInt16BE(uint16_t &v) {
+    return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(uint16_t));
+  }
+
+  bool writeUInt16BE(const uint16_t &v) {
+    return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(uint16_t));
   }
 
   bool readBigEndian(uint16_t &v) {
@@ -228,12 +244,28 @@ class byte_buffer {
     return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(uint16_t));
   }
 
+  bool readUInt32BE(uint32_t &v) {
+    return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(uint32_t));
+  }
+
+  bool writeUInt32BE(const uint32_t &v) {
+    return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(uint32_t));
+  }
+
   bool readBigEndian(uint32_t &v) {
     return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(uint32_t));
   }
 
   bool writeBigEndian(const uint32_t &v) {
     return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(uint32_t));
+  }
+
+  bool readUInt64BE(uint64_t &v) {
+    return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(uint64_t));
+  }
+
+  bool writeUInt64BE(const uint64_t &v) {
+    return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(uint64_t));
   }
 
   bool readBigEndian(uint64_t &v) {
@@ -244,12 +276,92 @@ class byte_buffer {
     return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(uint64_t));
   }
 
+  bool readInt8BE(int8_t &v) {
+    return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(int8_t));
+  }
+
+  bool writeInt8BE(const int8_t &v) {
+    return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(int8_t));
+  }
+
+  bool readBigEndian(int8_t &v) {
+    return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(int8_t));
+  }
+
+  bool writeBigEndian(const int8_t &v) {
+    return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(int8_t));
+  }
+
+  bool readInt16BE(int16_t &v) {
+    return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(int16_t));
+  }
+
+  bool writeInt16BE(const int16_t &v) {
+    return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(int16_t));
+  }
+
+  bool readBigEndian(int16_t &v) {
+    return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(int16_t));
+  }
+
+  bool writeBigEndian(const int16_t &v) {
+    return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(int16_t));
+  }
+
+  bool readInt32BE(int32_t &v) {
+    return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(int32_t));
+  }
+
+  bool writeInt32BE(const int32_t &v) {
+    return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(int32_t));
+  }
+
+  bool readBigEndian(int32_t &v) {
+    return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(int32_t));
+  }
+
+  bool writeBigEndian(const int32_t &v) {
+    return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(int32_t));
+  }
+
+  bool readInt64BE(int64_t &v) {
+    return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(int64_t));
+  }
+
+  bool writeInt64BE(const int64_t &v) {
+    return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(int64_t));
+  }
+
+  bool readBigEndian(int64_t &v) {
+    return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(int64_t));
+  }
+
+  bool writeBigEndian(const int64_t &v) {
+    return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(int64_t));
+  }
+
+  bool readFloat32BE(float &v) {
+    return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(float));
+  }
+
+  bool writeFloat32BE(const float &v) {
+    return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(float));
+  }
+
   bool readBigEndian(float &v) {
     return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(float));
   }
 
   bool writeBigEndian(const float &v) {
     return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(float));
+  }
+
+  bool readFloat64BE(double &v) {
+    return readBigEndian(reinterpret_cast<uint8_t*>(&v), sizeof(double));
+  }
+
+  bool writeFloat64BE(const double &v) {
+    return writeBigEndian(reinterpret_cast<const uint8_t*>(&v), sizeof(double));
   }
 
   bool readBigEndian(double &v) {
