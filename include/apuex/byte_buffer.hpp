@@ -399,9 +399,11 @@ class byte_buffer {
     _element_count = 0;
   }
 
+  uint8_t* buffer() const { return _buffer; }
   size_t buffer_size() const { return _buffer_size; }
   size_t element_count() const { return _element_count; }
   size_t pos() const { return _pos; }
+  void pos(size_t p) const { _pos = p; }
 
  private:
   bool operator==(const byte_buffer& rv) const { return false; }
