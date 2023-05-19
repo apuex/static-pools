@@ -403,7 +403,7 @@ class byte_buffer {
   size_t buffer_size() const { return _buffer_size; }
   size_t element_count() const { return _element_count; }
   size_t pos() const { return _pos; }
-  void pos(size_t p) const { _pos = p; }
+  void pos(size_t p) { _pos = p; }
 
  private:
   bool operator==(const byte_buffer& rv) const { return false; }
