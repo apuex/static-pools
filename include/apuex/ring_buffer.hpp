@@ -14,8 +14,19 @@ class ring_buffer {
      , _buffer(new value_type[size])
      , _element_count(0)
      , _rd_pos(0)
-     , _wr_pos(0) 
+     , _wr_pos(0)
      { }
+  ring_buffer(const ring_buffer& rv)
+     : _buffer_size(rv._buffer_size)
+     , _buffer(new value_type[rv._buffer_size])
+     , _element_count(rv._element_count)
+     , _rd_pos(rv._rd_pos)
+     , _wr_pos(rv._wr_pos) 
+     {
+       for(size_t i = 0; i != rv._buffer_size; ++i) {
+         *(_buffer + i) = *(rv._buffer + i);
+       }
+     }
   virtual ~ring_buffer() { delete[] _buffer; }
 
   size_t peek(value_type* rbuf, size_t to_read) {
@@ -28,6 +39,20 @@ class ring_buffer {
         if(_buffer_size == peek_pos) peek_pos = 0;
       }
       return i;
+    }
+  }
+
+  size_t skip(size_t to_read) {
+    if(0 == _element_count) return 0;
+    else {
+      if(to_read < _element_count) {
+        _element_count -= to_read;
+        return to_read;
+      } else {
+        size_t i = _element_count;
+        _element_count = 0;
+        return i;
+      }
     }
   }
 
@@ -72,7 +97,6 @@ class ring_buffer {
   size_t write_pos() const { return _wr_pos; }
 
  private:
-  ring_buffer(const ring_buffer& rv) { }
   ring_buffer& operator=(const ring_buffer& rv) { return *this; }
   bool operator==(const ring_buffer& rv) const { return false; }
 
