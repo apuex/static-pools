@@ -45,14 +45,13 @@ class ring_buffer {
   size_t skip(size_t to_read) {
     if(0 == _element_count) return 0;
     else {
-      if(to_read < _element_count) {
-        _element_count -= to_read;
-        return to_read;
-      } else {
-        size_t i = _element_count;
-        _element_count = 0;
-        return i;
+      size_t i = 0;
+      for(i = 0; i != to_read && i != _element_count; ++i) {
+        ++_rd_pos;
+        if(_buffer_size == _rd_pos) _rd_pos = 0;
       }
+      _element_count -= i;
+      return i;
     }
   }
 
