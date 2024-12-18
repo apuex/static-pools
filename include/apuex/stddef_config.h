@@ -20,6 +20,10 @@
 #endif /*_DEBUG*/
 
 #ifndef _MSC_VER
+typedef int BOOL;
+#define TRUE 1
+#define FALSE 0
+#define MAX_PATH 512
 #else /*_MSC_VER */
 #ifndef __cplusplus
 typedef enum { false=0, true=1 } bool;
