@@ -6,6 +6,8 @@
 #include <exception>
 #include <iostream>
 #include <iomanip>
+#include <memory>
+#include <list>
 
 #ifndef YDT1363_MAX_INFO_LENGTH
 #define YDT1363_MAX_INFO_LENGTH 0x0fff
@@ -61,7 +63,7 @@ inline uint16_t fromHexChars(
   if(  0 == charBuffLen
     || 0 == bytesLen) return 0;
   for(i = 0; i != bytesLen && ((i*2) != charBuffLen); ++i) {
-    bytes[i] = 0xff & 
+    bytes[i] = 0xff &
       ( (toHalfByte(chars[2*i]) << 4)
       | (toHalfByte(chars[2*i + 1]))
       );
@@ -70,7 +72,7 @@ inline uint16_t fromHexChars(
 }
 
 inline uint16_t toHexChars(
-  uint8_t *chars, const uint16_t charBuffLen, 
+  uint8_t *chars, const uint16_t charBuffLen,
   const uint8_t *bytes, const uint16_t bytesLen
   ) {
   uint16_t i = 0;
@@ -82,6 +84,562 @@ inline uint16_t toHexChars(
   }
   return (2 * i);
 }
+
+// Serializable
+struct Serializable
+{
+  typedef std::shared_ptr<Serializable> Ptr;
+  enum SERIALIZABLE_TYPE
+  { SER_UINT8 = 0
+  , SER_UINT16
+  , SER_UINT32
+  , SER_FLOAT32
+  , SER_LIST
+  , SER_REPLICATABLE
+  };
+  Serializable(SERIALIZABLE_TYPE type, bool invalid)
+      : _type(type)
+      , _invalid(invalid)
+  {
+  }
+  virtual ~Serializable()
+  {
+  }
+
+  virtual int read(const uint8_t * buff, const size_t length, size_t& pos) = 0;
+  virtual int write(uint8_t * buff, const size_t length, size_t& pos) = 0;
+  virtual Ptr duplicate() = 0;
+  virtual bool operator==(const Serializable& n) = 0;
+
+  const bool _type;
+  bool _invalid;
+};
+
+// UInt8
+struct UInt8 : public Serializable
+{
+  explicit UInt8(uint8_t v)
+    : Serializable(SER_UINT8, false)
+    , _value(v)
+  {}
+
+  explicit UInt8()
+    : Serializable(SER_UINT8, true)
+    , _value(0)
+  {}
+
+  virtual ~UInt8()
+  {}
+
+  UInt8& operator=(const UInt8& v)
+  {
+    this->_invalid = v._invalid;
+    this->_value = v._value;
+    return (*this);
+  }
+  int read(const uint8_t * buff, const size_t length, size_t& pos)
+  {
+    const size_t size = (2 * sizeof(_value));
+    if((length > pos) && (length - pos) >= size)
+    {
+      _invalid = false;
+      for(size_t i = 0; i != size; ++i)
+      {
+        if(0x20 == buff[pos + i])
+        {
+          _invalid = true;
+          break;
+        }
+      }
+      if(!_invalid)
+      {
+        size_t sz = fromHexChars(&_value, sizeof(_value), (buff + pos), (length - pos));
+        pos += (2 * sz);
+        return (2 * sz);
+      }
+      else
+      {
+        pos += size;
+        return size;
+      }
+    }
+    return 0;
+  }
+
+  int write(uint8_t * buff, const size_t length, size_t& pos)
+  {
+    const size_t size = (2 * sizeof(_value));
+    if((length > pos) && (length - pos) >= size)
+    {
+      if(_invalid)
+      {
+        for(size_t i = 0; i != size; ++i)
+        {
+          buff[pos + i] = 0x20;
+        }
+        pos += size;
+        return size;
+      }
+      else
+      {
+        size_t sz = toHexChars((buff + pos), (length - pos), &_value, sizeof(_value));
+        pos += sz;
+        return sz;
+      }
+    }
+    return 0;
+  }
+
+  Ptr duplicate()
+  {
+    UInt8* p = new UInt8();
+    p->_invalid = _invalid;
+    p->_value = _value;
+    Ptr ptr(p);
+    return ptr;
+  }
+
+  bool operator==(const Serializable& n)
+  {
+    if(_type == n._type)
+    {
+      const UInt8& np = dynamic_cast<const UInt8&>(n);
+      return (_invalid == np._invalid && _value == np._value);
+    }
+    return false;
+  }
+
+  uint8_t _value;
+};
+
+// UInt16
+struct UInt16 : public Serializable
+{
+  explicit UInt16(uint16_t v)
+    : Serializable(SER_UINT16, false)
+    , _value(v)
+  {}
+
+  explicit UInt16()
+    : Serializable(SER_UINT16, true)
+    , _value(0)
+  {}
+
+  virtual ~UInt16()
+  {}
+
+  int read(const uint8_t * buff, const size_t length, size_t& pos)
+  {
+    const size_t size = (2 * sizeof(_value));
+    if((length > pos) && (length - pos) >= size)
+    {
+      _invalid = false;
+      for(size_t i = 0; i != size; ++i)
+      {
+        if(0x20 == buff[pos + i])
+        {
+          _invalid = true;
+          break;
+        }
+      }
+      if(!_invalid)
+      {
+        // FIXME: BE-to-LE - non-portable code, just LE machines..
+        uint16_t v;
+        uint8_t *src = reinterpret_cast<uint8_t *>(&v);
+        uint8_t *dst = reinterpret_cast<uint8_t *>(&_value);
+        size_t sz = fromHexChars(src, sizeof(v), (buff + pos), (length - pos));
+        for(size_t i = 0; i != sizeof(_value); ++i)
+        {
+          dst[sizeof(_value) - (i + 1)] = src[i];
+        }
+        pos += (2 * sz);
+        return (2 * sz);
+      }
+      else
+      {
+        pos += size;
+        return size;
+      }
+    }
+    return 0;
+  }
+
+  int write(uint8_t * buff, const size_t length, size_t& pos)
+  {
+    const size_t size = (2 * sizeof(_value));
+    if((length > pos) && (length - pos) >= size)
+    {
+      if(_invalid)
+      {
+        for(size_t i = 0; i != size; ++i)
+        {
+          buff[pos + i] = 0x20;
+        }
+        pos += size;
+        return size;
+      }
+      else
+      {
+        // FIXME: LE-to-BE - non-portable code, just for LE machines..
+        uint16_t v;
+        const uint8_t *src = reinterpret_cast<const uint8_t *>(&_value);
+        uint8_t *dst = reinterpret_cast<uint8_t *>(&v);
+        for(size_t i = 0; i != sizeof(_value); ++i)
+        {
+          dst[sizeof(_value) - (i + 1)] = src[i];
+        }
+        size_t sz = toHexChars((buff + pos), (length - pos), dst, sizeof(v));
+        pos += sz;
+        return sz;
+      }
+    }
+    return 0;
+  }
+
+  Ptr duplicate()
+  {
+    UInt16* p = new UInt16();
+    p->_invalid = _invalid;
+    p->_value = _value;
+    Ptr ptr(p);
+    return ptr;
+  }
+
+  bool operator==(const Serializable& n)
+  {
+    if(_type == n._type)
+    {
+      const UInt16& np = dynamic_cast<const UInt16&>(n);
+      return (_invalid == np._invalid && _value == np._value);
+    }
+    return false;
+  }
+
+  uint16_t _value;
+};
+
+// UInt32
+struct UInt32 : public Serializable
+{
+  explicit UInt32(uint32_t v)
+    : Serializable(SER_UINT32, false)
+    , _value(v)
+  {}
+
+  explicit UInt32()
+    : Serializable(SER_UINT32, true)
+    , _value(0)
+  {}
+
+  virtual ~UInt32()
+  {}
+
+  int read(const uint8_t * buff, const size_t length, size_t& pos)
+  {
+    const size_t size = (2 * sizeof(_value));
+    if((length > pos) && (length - pos) >= size)
+    {
+      _invalid = false;
+      for(size_t i = 0; i != size; ++i)
+      {
+        if(0x20 == buff[pos + i])
+        {
+          _invalid = true;
+          break;
+        }
+      }
+      if(!_invalid)
+      {
+        // FIXME: BE-to-LE - non-portable code, just LE machines..
+        uint32_t v;
+        uint8_t *src = reinterpret_cast<uint8_t *>(&v);
+        uint8_t *dst = reinterpret_cast<uint8_t *>(&_value);
+        size_t sz = fromHexChars(src, sizeof(v), (buff + pos), (length - pos));
+        for(size_t i = 0; i != sizeof(_value); ++i)
+        {
+          dst[sizeof(_value) - (i + 1)] = src[i];
+        }
+        pos += (2 * sz);
+        return (2 * sz);
+      }
+      else
+      {
+        pos += size;
+        return size;
+      }
+    }
+    return 0;
+  }
+
+  int write(uint8_t * buff, const size_t length, size_t& pos)
+  {
+    const size_t size = (2 * sizeof(_value));
+    if((length > pos) && (length - pos) >= size)
+    {
+      if(_invalid)
+      {
+        for(size_t i = 0; i != size; ++i)
+        {
+          buff[pos + i] = 0x20;
+        }
+        pos += size;
+        return size;
+      }
+      else
+      {
+        // FIXME: LE-to-BE - non-portable code, just for LE machines..
+        uint32_t v;
+        const uint8_t *src = reinterpret_cast<const uint8_t *>(&_value);
+        uint8_t *dst = reinterpret_cast<uint8_t *>(&v);
+        for(size_t i = 0; i != sizeof(_value); ++i)
+        {
+          dst[sizeof(_value) - (i + 1)] = src[i];
+        }
+        size_t sz = toHexChars((buff + pos), (length - pos), dst, sizeof(v));
+        pos += sz;
+        return sz;
+      }
+    }
+    return 0;
+  }
+
+  Ptr duplicate()
+  {
+    UInt32* p = new UInt32();
+    p->_invalid = _invalid;
+    p->_value = _value;
+    Ptr ptr(p);
+    return ptr;
+  }
+
+  bool operator==(const Serializable& n)
+  {
+    if(_type == n._type)
+    {
+      const UInt32& np = dynamic_cast<const UInt32&>(n);
+      return (_invalid == np._invalid && _value == np._value);
+    }
+    return false;
+  }
+
+  uint32_t _value;
+};
+
+// Float32
+struct Float32 : public Serializable
+{
+  explicit Float32(float v)
+    : Serializable(SER_FLOAT32, false)
+    , _value(v)
+  {}
+
+  explicit Float32()
+    : Serializable(SER_FLOAT32, true)
+    , _value(0)
+  {}
+
+  virtual ~Float32()
+  {}
+
+  int read(const uint8_t * buff, const size_t length, size_t& pos)
+  {
+    const size_t size = (2 * sizeof(_value));
+    if((length > pos) && (length - pos) >= size)
+    {
+      _invalid = false;
+      for(size_t i = 0; i != size; ++i)
+      {
+        if(0x20 == buff[pos + i])
+        {
+          _invalid = true;
+          break;
+        }
+      }
+      if(!_invalid)
+      {
+        // FIXME: assuming LE - non-portable code, just LE machines..
+        uint8_t *src = reinterpret_cast<uint8_t *>(&_value);
+        size_t sz = fromHexChars(src, sizeof(_value), (buff + pos), (length - pos));
+        pos += (2 * sz);
+        return (2 * sz);
+      }
+      else
+      {
+        pos += size;
+        return size;
+      }
+    }
+    return 0;
+  }
+
+  int write(uint8_t * buff, const size_t length, size_t& pos)
+  {
+    const size_t size = (2 * sizeof(_value));
+    if((length > pos) && (length - pos) >= size)
+    {
+      if(_invalid)
+      {
+        for(size_t i = 0; i != size; ++i)
+        {
+          buff[pos + i] = 0x20;
+        }
+        pos += size;
+        return size;
+      }
+      else
+      {
+        // FIXME: assuming LE - non-portable code, just for LE machines..
+        const uint8_t *dst = reinterpret_cast<const uint8_t *>(&_value);
+        size_t sz = toHexChars((buff + pos), (length - pos), dst, sizeof(_value));
+        pos += sz;
+        return sz;
+      }
+    }
+    return 0;
+  }
+
+  Ptr duplicate()
+  {
+    Float32* p = new Float32();
+    p->_invalid = _invalid;
+    p->_value = _value;
+    Ptr ptr(p);
+    return ptr;
+  }
+
+  bool operator==(const Serializable& n)
+  {
+    if(_type == n._type)
+    {
+      const Float32& np = dynamic_cast<const Float32&>(n);
+      return (_invalid == np._invalid && _value == np._value);
+    }
+    return false;
+  }
+
+  float _value;
+};
+
+// list of serializable
+// 1. fixed length, pre-loaded std::list, etc.
+// 2. replicate N-times.
+
+// List
+struct List : public Serializable
+{
+  explicit List()
+    : Serializable(SER_LIST, false)
+    , _value()
+  {}
+
+  virtual ~List()
+  {}
+
+  int read(const uint8_t * buff, const size_t length, size_t& pos)
+  {
+    size_t sz = 0;
+    for(auto it = _value.begin(); it != _value.end(); ++it)
+    {
+      sz += (*it)->read(buff + sz, length - sz, pos);
+    }
+    return sz;
+  }
+
+  int write(uint8_t * buff, const size_t length, size_t& pos)
+  {
+    size_t sz = 0;
+    for(auto it = _value.begin(); it != _value.end(); ++it)
+    {
+      sz += (*it)->write(buff + sz, length - sz, pos);
+    }
+    return sz;
+  }
+
+  Ptr duplicate()
+  {
+    List* p = new List();
+    p->_invalid = _invalid;
+    for(auto it = _value.begin(); it != _value.end(); ++it)
+    {
+      p->_value.push_back((*it)->duplicate());
+    }
+    Ptr ptr(p);
+    return ptr;
+  }
+
+  bool operator==(const Serializable& n)
+  {
+    if(_type == n._type)
+    {
+      const List& np = dynamic_cast<const List&>(n);
+      return (_invalid == np._invalid && _value == np._value);
+    }
+    return false;
+  }
+
+  std::list<Serializable::Ptr> _value;
+};
+
+// Replicatable
+struct Replicatable : public Serializable
+{
+  explicit Replicatable()
+    : Serializable(SER_REPLICATABLE, false)
+    , _count()
+    , _value(new List())
+    , _replica(new List())
+  {}
+
+  virtual ~Replicatable()
+  {}
+
+  int read(const uint8_t * buff, const size_t length, size_t& pos)
+  {
+    size_t sz = 0;
+    sz += _count.read(buff + sz, length - sz, pos);
+    if(!_count._invalid)
+    {
+      for(size_t i = 0; i != _count._value; ++i)
+      {
+        //auto pv = _value->
+        //sz += (*it)->read(buff + sz, length - sz, pos);
+      }
+    }
+    return sz;
+  }
+
+  int write(uint8_t * buff, const size_t length, size_t& pos)
+  {
+    return 0;
+  }
+
+  Ptr duplicate()
+  {
+    Replicatable* p = new Replicatable();
+    p->_invalid = _invalid;
+    // assuming non-null smart-pointers.
+    p->_count = _count;
+    p->_value = _value->duplicate();
+    p->_replica = _replica->duplicate();
+    Ptr ptr(p);
+    return ptr;
+  }
+
+  bool operator==(const Serializable& n)
+  {
+    if(_type == n._type)
+    {
+      const Replicatable& np = dynamic_cast<const Replicatable&>(n);
+      return (_invalid == np._invalid && _value == np._value);
+    }
+    return false;
+  }
+
+  UInt8 _count;
+  Serializable::Ptr _value;
+  Serializable::Ptr _replica;
+};
 
 // message definition
 struct Header {
@@ -268,11 +826,11 @@ struct Frame {
 public:
   Frame()
     :_pos(0)
-    , _buffer(_bufferContent, 0, 0, sizeof(_bufferContent)) 
+    , _buffer(_bufferContent, 0, 0, sizeof(_bufferContent))
   {}
   Frame(const uint8_t *bytes, const uint16_t length)
     :_pos(0)
-    , _buffer(_bufferContent, 0, 0, sizeof(_bufferContent)) 
+    , _buffer(_bufferContent, 0, 0, sizeof(_bufferContent))
   {
     offer(bytes, length);
   }
